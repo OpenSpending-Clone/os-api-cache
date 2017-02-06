@@ -17,6 +17,7 @@ class RedisCache(BaseCache):
         self.redis_connection.set(key, item, ex=timeout)
         context_key = RedisCache._make_context_key(context)
         self.redis_connection.sadd(context_key, key)
+        self.redis_connection.expire(context_key, self.timeout())
 
     def _get(self, context, params):
         key = RedisCache._make_key(context, params)
