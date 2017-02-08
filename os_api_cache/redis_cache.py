@@ -25,6 +25,9 @@ class RedisCache(BaseCache):
         item = self.redis_connection.get(key)
         if item is None:
             self.redis_connection.srem(context_key, key)
+        else:
+            self.redis_connection.expire(key, self.timeout())
+            self.redis_connection.expire(context_key, self.timeout())
         return item
 
     def _clear(self, context):
