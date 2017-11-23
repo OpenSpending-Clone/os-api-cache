@@ -5,17 +5,18 @@ import pytest
 
 from redis import StrictRedis
 
-from os_api_cache import RedisCache
+from os_api_cache import OSCache
 
-TIMEOUT=5
+TIMEOUT = 5
+
 
 @pytest.fixture
 def redis_cache():
     redis_host = 'localhost'
-    redis_port= 6379
+    redis_port = 6379
     redis_connection = StrictRedis(host=redis_host, port=redis_port, db=1)
     redis_connection.flushdb()
-    _cache = RedisCache(redis_host, redis_port, TIMEOUT)
+    _cache = OSCache(redis_host, redis_port, TIMEOUT)
     return _cache
 
 
