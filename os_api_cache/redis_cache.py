@@ -10,7 +10,8 @@ class RedisCache(BaseCache):
     def __init__(self, redis_host, redis_port,
                  default_timeout):
         super(RedisCache, self).__init__(default_timeout=default_timeout)
-        self.redis_connection = StrictRedis(host=redis_host, port=redis_port, db=1)
+        self.redis_connection = StrictRedis(host=redis_host,
+                                            port=redis_port, db=1)
 
     def _put(self, context, params, item, timeout):
         key = RedisCache._make_key(context, params)

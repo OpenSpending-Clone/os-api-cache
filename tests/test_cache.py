@@ -5,17 +5,18 @@ import pytest
 
 from redis import StrictRedis
 
-from os_api_cache import RedisCache
+from os_api_cache import OSCache
 
-TIMEOUT=5
+TIMEOUT = 5
+
 
 @pytest.fixture
 def redis_cache():
     redis_host = 'localhost'
-    redis_port= 6379
+    redis_port = 6379
     redis_connection = StrictRedis(host=redis_host, port=redis_port, db=1)
     redis_connection.flushdb()
-    _cache = RedisCache(redis_host, redis_port, TIMEOUT)
+    _cache = OSCache(redis_host, redis_port, TIMEOUT)
     return _cache
 
 
@@ -53,8 +54,18 @@ class TestCache(object):
         context = 'context'
         params = {'key': 'value'}
         item = {'a', 'b', 'c'}
-        redis_cache.put(context, params, item, timeout=TIMEOUT*2-1)
+        redis_cache.put(context, params, item, timeout=TIMEOUT*2)
+        time.sleep(TIMEOUT*2-1)
         assert 'a' in redis_cache.get(context, params)
+        time.sleep(TIMEOUT)
+        assert redis_cache.get(context, params) is None
+
+    def test_nondefault_timeout_reset(self, redis_cache):
+        '''key resets timeout to default_timeout after first access.'''
+        context = 'context'
+        params = {'key': 'value'}
+        item = {'a', 'b', 'c'}
+        redis_cache.put(context, params, item, timeout=TIMEOUT*2)
         time.sleep(TIMEOUT)
         assert 'a' in redis_cache.get(context, params)
         time.sleep(TIMEOUT)
