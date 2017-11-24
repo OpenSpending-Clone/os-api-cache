@@ -50,6 +50,16 @@ class TestCache(object):
         time.sleep(TIMEOUT)
         assert redis_cache.get(context, params) is None
 
+    def test_nondefault_timeout(self, redis_cache):
+        context = 'context'
+        params = {'key': 'value'}
+        item = {'a', 'b', 'c'}
+        redis_cache.put(context, params, item, timeout=TIMEOUT*2)
+        time.sleep(TIMEOUT*2-1)
+        assert 'a' in redis_cache.get(context, params)
+        time.sleep(TIMEOUT)
+        assert redis_cache.get(context, params) is None
+
     def test_nondefault_timeout_reset(self, redis_cache):
         '''key resets timeout to default_timeout after first access.'''
         context = 'context'
