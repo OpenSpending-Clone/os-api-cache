@@ -13,6 +13,6 @@ def get_os_cache():
         cache_timeout = int(os.environ.get('OS_API_CACHE_TIMEOUT', 86400))
         _the_cache = OSCache(host, 6379, cache_timeout)
 
-        logging.error('CACHE %s', _the_cache)
-        logging.error('CACHE TIMEOUT %s', cache_timeout)
+        logging.info('CACHE %s', _the_cache)
+        logging.info('CACHE TIMEOUT %s', cache_timeout)
     return _the_cache
