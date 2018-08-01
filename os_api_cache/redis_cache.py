@@ -21,14 +21,16 @@ class RedisCache(BaseCache):
         self.redis_connection.expire(context_key, self.timeout())
 
     def _get(self, context, params):
+        item = None
         key = RedisCache._make_key(context, params)
         context_key = RedisCache._make_context_key(context)
-        item = self.redis_connection.get(key)
-        if item is None:
-            self.redis_connection.srem(context_key, key)
-        else:
-            self.redis_connection.expire(key, self.timeout())
-            self.redis_connection.expire(context_key, self.timeout())
+        if self.redis_connection.sismember(context_key, key):
+            item = self.redis_connection.get(key)
+            if item is None:
+                self.redis_connection.srem(context_key, key)
+            else:
+                self.redis_connection.expire(key, self.timeout())
+                self.redis_connection.expire(context_key, self.timeout())
         return item
 
     def _clear(self, context):
@@ -38,8 +40,7 @@ class RedisCache(BaseCache):
         while item is not None:
             pipe.delete(item)
             item = self.redis_connection.spop(context_key)
-
-        pipe.execute(raise_on_error=False)
+        pipe.execute(raise_on_error=True)
 
     @staticmethod
     def _make_key(context, params):

@@ -26,14 +26,14 @@ class TestCache(object):
         print("OK")
 
     def test_simple_store(self, redis_cache):
-        context = 'context'
+        context = 'context1'
         params = {'key': 'value'}
         item = {'a', 'b', 'c'}
         redis_cache.put(context, params, item)
         assert 'a' in redis_cache.get(context, params)
 
     def test_get_nonexistent(self, redis_cache):
-        context = 'context'
+        context = 'context2'
         params = {'key': 'value'}
         params2 = {'key': 'value2'}
         item = {'a', 'b', 'c'}
@@ -42,7 +42,7 @@ class TestCache(object):
         assert redis_cache.get(context, params2) is None
 
     def test_default_timeout(self, redis_cache):
-        context = 'context'
+        context = 'context3'
         params = {'key': 'value'}
         item = {'a', 'b', 'c'}
         redis_cache.put(context, params, item)
@@ -51,28 +51,17 @@ class TestCache(object):
         assert redis_cache.get(context, params) is None
 
     def test_nondefault_timeout(self, redis_cache):
-        context = 'context'
+        context = 'context4'
         params = {'key': 'value'}
         item = {'a', 'b', 'c'}
-        redis_cache.put(context, params, item, timeout=TIMEOUT*2)
-        time.sleep(TIMEOUT*2-1)
-        assert 'a' in redis_cache.get(context, params)
-        time.sleep(TIMEOUT)
-        assert redis_cache.get(context, params) is None
-
-    def test_nondefault_timeout_reset(self, redis_cache):
-        '''key resets timeout to default_timeout after first access.'''
-        context = 'context'
-        params = {'key': 'value'}
-        item = {'a', 'b', 'c'}
-        redis_cache.put(context, params, item, timeout=TIMEOUT*2)
-        time.sleep(TIMEOUT)
+        redis_cache.put(context, params, item, timeout=TIMEOUT)
+        time.sleep(TIMEOUT-1)
         assert 'a' in redis_cache.get(context, params)
         time.sleep(TIMEOUT)
         assert redis_cache.get(context, params) is None
 
     def test_clear(self, redis_cache):
-        context = 'context'
+        context = 'context6'
         params = {'key': 'value'}
         item = {'a', 'b', 'c'}
         redis_cache.put(context, params, item)
