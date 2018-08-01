@@ -10,7 +10,7 @@ with open(os.path.join(here, 'README.md'), encoding='utf-8') as f:
 
 setup(
     name='os_api_cache',
-    version='0.0.6',
+    version='0.0.7',
     description=(
         'Manage a cache for OpenSpending API'
     ),
